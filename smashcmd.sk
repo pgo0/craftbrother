@@ -1,0 +1,45 @@
+options:
+	P: &7[&4SMASH&7]
+	U: &7[&cSmashClass&7]
+
+#UNIVERSAL COMMAND FOR SMASH BROS
+
+command /smash <text> [<text>]:
+	usage: /smash <text>
+	trigger:
+		if arg 1 is "class", "char", "character" or "kit":
+			if arg 2 is not set:
+				open chest with 4 rows named "&4Smash Characters" to player
+				format slot 0 of player with blaze rod named "&6Blaze" to close then run [make player execute command "/smash class blaze"]
+				format slot 1 of player with creeper head named "&aCreeper" to close then run [make player execute command "/smash class creeper"]
+
+			#BLAZE
+			else if arg 2 is "blaze":
+				console command "clear %player%"
+				console command "heal %player%"
+				equip player with all leather armor
+				color player's leggings orange
+				color player's chestplate orange
+				color player's boots orange
+				remove leather helmet from the player
+				set the helmet of player to skull of ("MHF_Blaze" parsed as offline player)
+				give player a blaze rod named "&6Blaze Rod" 
+				give player a blaze powder named "&6Fireball" 
+				give player a flint named "&6Fire"
+				apply fire resistance to player for 999 days
+				message "{@U} You have chosen &6Blaze &7as your character" to the player
+
+			#CREEPER
+			else if arg 2 is "creeper":
+				execute console command "clear %player%"
+				execute console command "heal %player%"
+				equip player with all leather armor
+				color player's leggings lime
+				color player's chestplate lime
+				color player's boots lime
+				remove leather helmet from the player
+				equip the player with creeper head
+				give player a gunpowder named "&7Gunpowder"
+				give player a coal named "&aBoomboost"
+				give player a tnt named "&cALLAHU AKBAR!"
+				message "{@U} You have chosen &aCreeper &7as your character" to the player
