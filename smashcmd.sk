@@ -1,8 +1,13 @@
 options:
+	#Broadcast Title
 	P: &7[&4SMASH&7]
+
+	#Message Title (private messages to players)
 	U: &7[&cSmashClass&7]
 
-#UNIVERSAL COMMAND FOR SMASH BROS
+#--------------------------------------------------------------------
+#                   UNIVERSAL COMMAND FOR SMASH BROS
+#--------------------------------------------------------------------
 
 command /smash <text> [<text>]:
 	usage: /smash <text>
@@ -13,7 +18,7 @@ command /smash <text> [<text>]:
 				format slot 0 of player with blaze rod named "&6Blaze" to close then run [make player execute command "/smash class blaze"]
 				format slot 1 of player with creeper head named "&aCreeper" to close then run [make player execute command "/smash class creeper"]
 
-			#BLAZE
+			#-BLAZE-
 			else if arg 2 is "blaze":
 				console command "clear %player%"
 				console command "heal %player%"
@@ -29,7 +34,7 @@ command /smash <text> [<text>]:
 				apply fire resistance to player for 999 days
 				message "{@U} You have chosen &6Blaze &7as your character" to the player
 
-			#CREEPER
+			#-CREEPER-
 			else if arg 2 is "creeper":
 				execute console command "clear %player%"
 				execute console command "heal %player%"
@@ -43,3 +48,9 @@ command /smash <text> [<text>]:
 				give player a coal named "&aBoomboost"
 				give player a tnt named "&cALLAHU AKBAR!"
 				message "{@U} You have chosen &aCreeper &7as your character" to the player
+
+			#-SKELETON-
+			
+			#-PIGMAN-
+
+			#-SPIDER-
