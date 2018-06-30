@@ -19,11 +19,11 @@ on right click on a Blaze:
 	color player's chestplate orange
 	color player's boots orange
 	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Blaze""}"
-	give player a blaze rod named "<orange>Blaze Rod" 
-	give player a blaze powder named "<orange>Fireball" 
-	give player a flint named "<orange>Fire"
+	give player a blaze rod named "&6Blaze Rod" 
+	give player a blaze powder named "&6Fireball" 
+	give player a flint named "&6Fire"
 	apply fire resistance to player for 999 days
-	message "<gray>You have chosen <orange>Blaze <gray>as your character" to the player
+	message "&8You have chosen &6Blaze &8as your character" to the player
 
 on right click holding a blaze powder:
 	if {cooldown5::%player%} is true:
@@ -67,10 +67,10 @@ on right click on a Creeper:
 	color player's boots lime
 	remove leather helmet from the player
 	equip the player with creeper head
-	give player a gunpowder named "<gray>Gunpowder"
-	give player a coal named "<lime>Boomboost"
-	give player a tnt named "<red>ALAHUWAKBAR!!1!11!!"
-	message "<gray>You have chosen <lime>Creeper <gray>as your character" to the player
+	give player a gunpowder named "&7Gunpowder"
+	give player a coal named "&aBoomboost"
+	give player a tnt named "&4ALAHUWAKBAR!!1!11!!"
+	message "&8You have chosen &aCreeper &8as your character" to the player
 
 on right click holding coal:
 	if {cooldown30::%player%} is true:
@@ -108,10 +108,10 @@ on right click on a Skeleton:
 	color player's boots white
 	remove leather helmet from the player
 	equip the player with skeleton head
-	give player a bow of infinity named "<light gray>Bow"
-	give player a bone named "<light gray>Bone"
+	give player a bow of infinity named "<&7>Bow"
+	give player a bone named "<&7>Bone"
 	give player an arrow named "<red>Arrow Dive"
-	message "<gray>You have chosen <white>Skeleton <gray>as your character" to the player
+	message "&8You have chosen &fSkeleton &8as your character" to the player
 
 on right click holding a bone:
 	if {cooldown20::%player%} is true:
@@ -124,13 +124,11 @@ on right click holding a bone:
 		push the player forwards at speed 3
 		set {_loc} to the location at the player
 		wait 8 ticks
-		loop all entities in radius 3 around the executor:
-			if loop-entities is the executor:
-				stop
-			if loop-entities isn't the executor:
-				damage loop-entities by 0.5
-		damage all players by 1
-		wait 1 seconds
+		loop all entities in radius 3 of player:
+			loop-entity is not the player
+
+			make the player damage loop-entity by 0.5
+			wait 20 seconds
 		set {cooldown20::%player%} to false
 
 on right click holding an arrow:
@@ -163,11 +161,11 @@ on right click on a Zombie Pigman:
 	color player's boots pink
 	remove leather helmet from the player
 	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""ZombiePigman""}"
-	give player a golden sword named "<red>Sword"
-	give player a flint named "<orange>Fire"
+	give player a golden sword named "&4Sword"
+	give player a flint named "&6Fire"
 	give player a redstone named "&bPower Boost"
 	apply fire resistance to player for 999 days
-	message "<gray>You have chosen &dZombie <green>Pigman <gray>as your character" to the player
+	message "&8You have chosen &2Zombie &dPigman &8as your character" to the player
 
 on right click holding a redstone:
 	if {cooldown90::%player%} is true:
@@ -178,11 +176,11 @@ on right click holding a redstone:
 	if {cooldown90::%player%} is false:
 		set {cooldown90::%player%} to true
 		remove gold sword from the player
-		give a diamond sword named "<Blue>Sword" to the player
+		give a diamond sword named "&1Sword" to the player
 		apply speed 5 to the player for 30 seconds
 		wait 30 seconds
 		remove diamond sword from the player
-		give player gold sword named "<red>Sword"
+		give player gold sword named "&4Sword"
 		wait 60 seconds
 		set {cooldown90::%player%} to false
 
@@ -197,11 +195,49 @@ on right click on Spider:
 	color player's boots black
 	remove leather helmet from the player
 	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Spider""}"
-	message "<gray>You have chosen <black>Spider <gray>as your character" to the player
+	give player spider eye named "&2Spider Bite"
+	give player string named "&fSticky Web"
+	give player fermented spider eye named "&bSpider Pounce"
+	apply jump boost 2 to the player for 999 days
+	message "&7You have chosen &0Spider &7as your character" to the player
 
+on right click holding string:
+	if {cooldown30::%player%} is true:
+		stop	
+		cancel event
+	if {cooldown30::%player%} isn't set:
+		set {cooldown30::%player%} to false
+	if {cooldown30::%player%} is false:
+		set {cooldown30::%player%} to true
+		shoot a snowball at speed 2
+		wait 3 tick
+		shoot a snowball at speed 2
+		wait 3 tick
+		shoot a snowball at speed 2
+		wait 3 tick
+		shoot a snowball at speed 2
+		wait 3 tick
+		shoot a snowball at speed 2
+		wait 30 seconds
+		set {cooldown30::%player%} to false
 
+on projectile hit:
+	projectile is snowball
+	
+	set {_b} to the block at the projectile
+	if block at {_b} is air:
+		set the block at {_b} to cobweb
+		wait 5 seconds
+		set the block at {_b} to air
 
+on right click holding fermented spider eye:
+	push the player forwards at speed 3
+	wait 10 ticks
+	loop all entities in radius 3 of player:
+		loop-entity is not the player
 
+		make the player damage loop-entity by 0.5
+	
 
 
 
