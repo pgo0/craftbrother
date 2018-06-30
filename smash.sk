@@ -1,0 +1,224 @@
+#For our own Super Smash Bros 
+#/replaceitem entity @p slot.armor.head minecraft:skull {SkullOwner:"MHF_Blaze"}
+#if {cooldown::%player%} is true:
+#		stop
+#		cancel event
+#	if {cooldown::%player%} isn't set:
+#		set {cooldown::%player%} to false
+#	if {cooldown::%player%} is false:
+#		set {cooldown::%player%} to true
+#		wait 5 seconds
+#		set {cooldown::%player%} to false
+#
+#BLAZE
+on right click on a Blaze:
+	execute console command "clear %player%"
+	execute console command "effect %player% clear"
+	equip player with all leather armor
+	color player's leggings orange
+	color player's chestplate orange
+	color player's boots orange
+	remove leather helmet from the player
+	equip the player with skull of "MHF_Blaze" parsed as offline player
+	give player a blaze rod named "<orange>Blaze Rod" 
+	give player a blaze powder named "<orange>Fireball" 
+	give player a flint named "<orange>Fire"
+	apply fire resistance to player for 999 days
+	message "<gray>You have chosen <orange>Blaze <gray>as your character" to the player
+
+
+
+
+
+
+on right click holding a blaze powder:
+	if {cooldown5::%player%} is true:
+		stop
+		cancel event
+	if {cooldown5::%player%} isn't set:
+		set {cooldown5::%player%} to false
+	if {cooldown5::%player%} is false:
+		set {cooldown5::%player%} to true
+		shoot a fireball at speed 2
+		wait 10 ticks
+		shoot a fireball at speed 2
+		wait 10 ticks
+		shoot a fireball at speed 2
+		wait 5 seconds
+		set {cooldown5::%player%} to false
+
+on right click on entity:
+	player is holding a flint
+
+	if {cooldown30::%player%} is true:
+		stop
+		cancel event
+	if {cooldown30::%player%} isn't set:
+		set {cooldown30::%player%} to false
+	if {cooldown30::%player%} is false:
+		set {cooldown30::%player%} to true
+		ignite target entity for 5 seconds
+		show mob spawner flames at the targeted entity
+		wait 1 seconds
+		set {cooldown30::%player%} to false
+
+#CREEPER
+
+on right click on a Creeper:
+	execute console command "clear %player%"
+	execute console command "effect %player% clear"
+	equip player with all leather armor
+	color player's leggings lime
+	color player's chestplate lime
+	color player's boots lime
+	remove leather helmet from the player
+	equip the player with creeper head
+	give player a gunpowder named "<gray>Gunpowder"
+	give player a coal named "<lime>Boomboost"
+	give player a tnt named "<red>ALAHUWAKBAR!!1!11!!"
+	message "<gray>You have chosen <lime>Creeper <gray>as your character" to the player
+
+on right click holding coal:
+	if {cooldown30::%player%} is true:
+		stop
+		cancel event
+	if {cooldown30::%player%} isn't set:
+		set {cooldown30::%player%} to false
+	if {cooldown30::%player%} is false:
+		set {cooldown30::%player%} to true
+		push player upwards at speed 2.5
+		create fake explosion under the player
+		wait 30 seconds
+		set {cooldown30::%player%} to false
+
+on right click holding a tnt:
+	if {cooldown90::%player%} is true:
+		stop
+		cancel event
+	if {cooldown90::%player%} isn't set:
+		set {cooldown90::%player%} to false
+	if {cooldown90::%player%} is false:
+		set {cooldown90::%player%} to true
+		create a safe explosion of force 15 at player
+		wait 90 seconds
+		set {cooldown90::%player%} to false
+
+#SKELETON
+
+on right click on a Skeleton:
+	execute console command "clear %player%"
+	execute console command "effect %player% clear"
+	equip player with all leather armor
+	color player's leggings white
+	color player's chestplate white
+	color player's boots white
+	remove leather helmet from the player
+	equip the player with skeleton head
+	give player a bow of infinity named "<light gray>Bow"
+	give player a bone named "<light gray>Bone"
+	give player an arrow named "<red>Arrow Dive"
+	message "<gray>You have chosen <white>Skeleton <gray>as your character" to the player
+
+on right click holding a bone:
+	if {cooldown20::%player%} is true:
+		stop
+		cancel event
+	if {cooldown20::%player%} isn't set:
+		set {cooldown20::%player%} to false
+	if {cooldown20::%player%} is false:
+		set {cooldown20::%player%} to true
+		push the player forwards at speed 3
+		set {_loc} to the location at the player
+		wait 8 ticks
+		loop all entities in radius 3 around the executor:
+			if loop-entities is the executor:
+				stop
+			if loop-entities isn't the executor:
+				damage loop-entities by 0.5
+		damage all players by 1
+		wait 1 seconds
+		set {cooldown20::%player%} to false
+
+on right click holding an arrow:
+	if {cooldown60::%player%} is true:
+		stop
+		cancel event
+	if {cooldown60::%player%} isn't set:
+		set {cooldown60::%player%} to false
+	if {cooldown60::%player%} is false:
+		set {cooldown60::%player%} to true
+		shoot an arrow at speed 3	
+		make the player ride the last shot entity
+		wait 60 seconds
+		set {cooldown60::%player%} to false
+	
+on projectile hit:
+	the projectile is an arrow
+	shooter is riding the projectile 
+
+	create a safe explosion of force 5 at the projectile
+
+#ZOMBIEPIGMAN
+
+on right click on a Zombie Pigman:
+	execute console command "clear %player%"
+	execute console command "effect %player% clear"
+	equip player with all leather armor
+	color player's leggings green
+	color player's chestplate pink
+	color player's boots pink
+	remove leather helmet from the player
+	equip the player with skull of "ZombiePigman" parsed as offline player
+	give player a golden sword named "<red>Sword"
+	give player a flint named "<orange>Fire"
+	give player a redstone named "&bPower Boost"
+	apply fire resistance to player for 999 days
+	message "<gray>You have chosen &dZombie <green>Pigman <gray>as your character" to the player
+
+on right click holding a redstone:
+	if {cooldown90::%player%} is true:
+		stop
+		cancel event
+	if {cooldown90::%player%} isn't set:
+		set {cooldown90::%player%} to false
+	if {cooldown90::%player%} is false:
+		set {cooldown90::%player%} to true
+		remove gold sword from the player
+		give a diamond sword named "<Blue>Sword" to the player
+		apply speed 5 to the player for 30 seconds
+		wait 30 seconds
+		remove diamond sword from the player
+		give player gold sword named "<red>Sword"
+		wait 60 seconds
+		set {cooldown90::%player%} to false
+
+#SPIDER
+
+on right click on player:
+	the player is named Spider
+	
+	execute console command "clear %player%"
+	execute console command "effect %player% clear"
+	equip player with all leather armor
+	color player's leggings green
+	color player's chestplate pink
+	color player's boots pink
+	remove leather helmet from the player
+	equip the player with skull of "ZombiePigman" parsed as offline player
+	give player a golden sword named "<red>Sword"
+	give player a flint named "<orange>Fire"
+	give player a redstone named "&bPower Boost"
+	apply fire resistance to player for 999 days
+	message "<gray>You have chosen &dZombie <green>Pigman <gray>as your character" to the player
+
+
+
+
+
+
+
+
+
+	
+	
+	
