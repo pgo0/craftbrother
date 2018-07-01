@@ -2,18 +2,26 @@
 #/replaceitem entity @p slot.armor.head minecraft:skull {SkullOwner:"MHF_Blaze"}
 #set {cooldown::fireball::%player%} to 5
 #every second subtract 1 from {cooldown::fireball::%player%}
-#BLAZE
 
-every second:
-	loop {cooldown::*}:
-		if loop-value is greater than 0:
-			set {cooldown::*} to loop-value - 1
-			set {cooldown::*} to false
-		if loop-value is 0:
-			set {cooldown::*} to true
-			
+options:
+	#Broadcast Title
+	P: &7[&4SMASH&7]
+
+	#Message Title (private messages to players)
+	U: &7[&cSmashClass&7]&8
+
+every 1 second:
+	loop all players:
+		loop {cooldown.%loop-player%::*}:
+			{cooldown.%loop-player%::%loop-index%} is not 0
+			remove 1 from {cooldown.%loop-player%::%loop-index%}
+
+
+
+#BLAZE
 on right click on a Blaze:
-	execute console command "clear %player%"
+	set {smashchar::%player%} to "blaze"
+	execute console command "minecraft:clear %player%"
 	execute console command "heal %player%"
 	equip player with all leather armor
 	color player's leggings orange
@@ -24,62 +32,85 @@ on right click on a Blaze:
 	give player a blaze powder named "&6Fireball" 
 	give player a flint named "&6Fire"
 	apply fire resistance to player for 999 days
-	message "&8You have chosen &6Blaze &8as your character" to the player
+	message "{@U} You have chosen &6Blaze &8as your character" to the player
 
 on right click holding a blaze powder:
+	name of player's weapon is "&6Fireball"
+	if {cooldown.%player%::fireball} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::fireball}%"
+		stop
+	set {cooldown.%player%::fireball} to 5
 	shoot a fireball at speed 2
 	wait 10 ticks
 	shoot a fireball at speed 2
 	wait 10 ticks
 	shoot a fireball at speed 2
-	set {cooldown::fireball::%player%} to 5
-	
-on right click on entity:
-	player is holding a flint
-	
+
+#FIRE- SUBJECT TO CHANGE
+on right click holding flint on entity:
+	name of player's weapon is "&6Fire"
 	ignite target entity for 5 seconds
 	show mob spawner flames at the targeted entity	
+
+
 
 #CREEPER
 
 on right click on a Creeper:
-	execute console command "clear %player%"
-	execute console command "effect %player% clear"
+	set {smashchar::%player%} to "creeper"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
 	equip player with all leather armor
 	color player's leggings lime
 	color player's chestplate lime
 	color player's boots lime
-	remove leather helmet from the player
 	equip the player with creeper head
 	give player a gunpowder named "&7Gunpowder"
 	give player a coal named "&aBoomboost"
-	give player a tnt named "&4ALAHUWAKBAR!!1!11!!"
-	message "&8You have chosen &aCreeper &8as your character" to the player
+	give player a tnt named "&4ALLAHUAKBAR!!1!11!!"
+	message "{@U} You have chosen &aCreeper &8as your character" to the player
 
 on right click holding coal:
+	name of player's weapon is "&aBoomboost"
+	if {cooldown.%player%::boomboost} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::boomboost}%"
+		stop
+	set {cooldown.%player%::boomboost} to 20
 	push player upwards at speed 2.5
 	create fake explosion under the player
 
 on right click holding a tnt:
+	name of player's weapon is "&4ALLAHUAKBAR!!1!11!!"
+	if {cooldown.%player%::allah} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::allah}%"
+		stop
+	set {cooldown.%player%::allah} to 40
 	create a safe explosion of force 15 at player
+
+
 
 #SKELETON
 
 on right click on a Skeleton:
-	execute console command "clear %player%"
-	execute console command "effect %player% clear"
+	set {smashchar::%player%} to "skeleton"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
 	equip player with all leather armor
 	color player's leggings white
 	color player's chestplate white
 	color player's boots white
-	remove leather helmet from the player
 	equip the player with skeleton head
-	give player a bow of infinity named "<&7>Bow"
-	give player a bone named "<&7>Bone"
-	give player an arrow named "<red>Arrow Dive"
-	message "&8You have chosen &fSkeleton &8as your character" to the player
+	give player a bow of infinity named "&7Bow"
+	give player a bone named "&7Bone"
+	give player an arrow named "&cArrow Dive"
+	message "{@U} You have chosen &fSkeleton &8as your character" to the player
 
 on right click holding a bone:
+	name of player's weapon is "&7Bone"
+	if {cooldown.%player%::bone} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::bone}%"
+		stop
+	set {cooldown.%player%::bone} to 15
 	push the player in horizontal direction of player at speed 3
 	wait 8 ticks
 	loop all entities in radius 3 of player:
@@ -88,58 +119,77 @@ on right click holding a bone:
 		make the player damage loop-entity by 0.5
 
 on right click holding an arrow:
+	name of player's weapon is "&cArrow Dive"
+	if {cooldown.%player%::arrowdive} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::arrowdive}%"
+		stop
+	set {cooldown.%player%::arrowdive} to 30
 	shoot an arrow at speed 2.5	
 	make the player ride the last shot entity
 	
 on projectile hit:
+	{smashchar::%shooter%} is "skeleton"
 	the projectile is an arrow
 	shooter is riding the projectile 
-
 	create a safe explosion of force 5 at the projectile
+
+
 
 #ZOMBIEPIGMAN
 
 on right click on a Zombie Pigman:
-	execute console command "clear %player%"
-	execute console command "effect %player% clear"
+	set {smashchar::%player%} to "zombiepigman"
+	execute console command "minecart:clear %player%"
+	execute console command "heal %player%"
 	equip player with all leather armor
 	color player's leggings green
 	color player's chestplate pink
 	color player's boots pink
-	remove leather helmet from the player
 	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""ZombiePigman""}"
 	give player a golden sword named "&4Sword"
 	give player a flint named "&6Fire"
 	give player a redstone named "&bPower Boost"
 	apply fire resistance to player for 999 days
-	message "&8You have chosen &2Zombie &dPigman &8as your character" to the player
+	message "{@U} You have chosen &2Zombie &dPigman &8as your character" to the player
 
 on right click holding a redstone:
-	remove gold sword from the player
-	give a diamond sword named "&1Sword" to the player
-	apply speed 5 to the player for 30 seconds
-	wait 30 seconds
-	remove diamond sword from the player
+	name of player's weapon is "&bPower Boost"
+	if {cooldown.%player%::powerboost} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::powerboost}%"
+		stop
+	set {cooldown.%player%::powerboost} to 40
+	remove gold sword named "&4Sword" from the player
+	give a diamond sword named "&9Powered Sword" to the player
+	apply speed 3 to the player for 10 seconds
+	wait 10 seconds
+	remove diamond sword named "&9Powered Sword" from the player
 	give player gold sword named "&4Sword"
+
+
 
 #SPIDER
 
 on right click on Spider:
-	execute console command "clear %player%"
-	execute console command "effect %player% clear"
+	set {smashchar::%player%} to "spider"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
 	equip player with all leather armor
 	color player's leggings black
 	color player's chestplate black
 	color player's boots black
-	remove leather helmet from the player
 	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Spider""}"
 	give player spider eye named "&2Spider Bite"
 	give player string named "&fSticky Web"
 	give player fermented spider eye named "&bSpider Pounce"
 	apply jump boost 2 to the player for 999 days
-	message "&7You have chosen &0Spider &7as your character" to the player
+	message "{@U} You have chosen &0Spider &8as your character" to the player
 
 on right click holding string:
+	name of player's weapon is "&fSticky Web"
+	if {cooldown.%player%::stickyweb} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::stickyweb}%"
+		stop
+	set {cooldown.%player%::stickyweb} to 20
 	shoot a snowball at speed 2
 	wait 3 tick
 	shoot a snowball at speed 2
@@ -152,8 +202,8 @@ on right click holding string:
 	set {cooldown::stickyweb::%player%} to 30
 
 on projectile hit:
+	{smashchar::%shooter%} is "spider"
 	projectile is snowball
-	
 	set {_b} to the block at the projectile
 	if block at {_b} is air:
 		set the block at {_b} to cobweb
@@ -161,24 +211,32 @@ on projectile hit:
 		set the block at {_b} to air
 
 on right click holding fermented spider eye:
+	name of player's weapon is "&bSpider Pounce"
+	if {cooldown.%player%::spiderpounce} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::spiderpounce}%"
+		stop
+	set {cooldown.%player%::spiderpounce} to 15
 	push the player forwards at speed 3
 	wait 10 ticks
 	loop all entities in radius 3 of player:
 		loop-entity is not the player
-
 		make the player damage loop-entity by 0.5
 
+
+
+#ENDERMAN
+
 on right click on Enderman:
-	execute console command "clear %player%"
-	execute console command "effect %player% clear"
+	set {smashchar::%player%} to "enderman"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
 	equip player with all leather armor
 	color player's leggings purple
 	color player's chestplate black
 	color player's boots black
-	remove leather helmet from the player
 	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Enderman""}"
 	
-	message "&7You have chosen &0Spider &7as your character" to the player
+	message "{@U} You have chosen &0Spider &8as your character" to the player
 	
 
 
