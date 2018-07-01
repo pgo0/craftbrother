@@ -2,21 +2,23 @@
 on flight toggle:
 	player's gamemode is not creative:
 		cancel event
-		food level of player is greater than or equal to 4:
+		food level of player is greater than or equal to 3.5:
 			wait a tick
-			push player upwards at speed 1.5
-			push player forwards at speed 0.6
+			push player upwards at speed 1
+			push player forwards at speed 0.5
 			remove 3.5 from player's food level
-			if player's food level is less than 4:
+			if player's food level is less than 3.5:
 				set player's flight state to false
 
 #Food bar regeneration
 every 2 seconds:
 	loop all players:
 		add 0.5 to loop-player's food level
-		if food level of loop-player is greater than or equal to 4:
+		if block under loop-player is not air:
+			add 1.5 to loop-player's food level
+		if food level of loop-player is greater than or equal to 3.5:
 			set loop-player's flight state to true
-		else if food level of loop-player is less than 4:
+		else if food level of loop-player is less than 3.5:
 			set loop-player's flight state to false
 
 #Cancel falldamage
