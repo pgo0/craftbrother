@@ -2,6 +2,17 @@
 #/replaceitem entity @p slot.armor.head minecraft:skull {SkullOwner:"MHF_Blaze"}
 #set {cooldown::fireball::%player%} to 5
 #every second subtract 1 from {cooldown::fireball::%player%}
+#if {cooldown.%player%::fireball} is greater than 0:
+#		send "&cCooldown: %{cooldown.%player%::fireball}%"
+#		stop
+#set {cooldown.%player%::fireball} to 5
+#{smashchar::%player%} is "spider"
+
+
+
+
+
+
 
 options:
 	#Broadcast Title
@@ -139,7 +150,7 @@ on projectile hit:
 
 on right click on a Zombie Pigman:
 	set {smashchar::%player%} to "zombiepigman"
-	execute console command "minecart:clear %player%"
+	execute console command "minecraft:clear %player%"
 	execute console command "heal %player%"
 	equip player with all leather armor
 	color player's leggings green
@@ -234,13 +245,38 @@ on right click on Enderman:
 	color player's leggings purple
 	color player's chestplate black
 	color player's boots black
+	give player ender pearl named "&5Pearl"
+	give player purple dye named "&8Hinder"
+	give player eye of ender named "&5Proj Immunity"
 	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Enderman""}"
-	
-	message "{@U} You have chosen &0Spider &8as your character" to the player
-	
+	message "{@U} You have chosen &5Enderman &8as your character" to the player
 
+on shoot:
+	projectile is ender pearl
 
+	give shooter enderpearl 
+	cancel event
 
+on right click holding an ender pearl:
+	{smashchar::%player%} is "enderman"
+	if {cooldown.%player%::enderpearl} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::enderpearl}%"
+		stop
+	set {cooldown.%player%::enderpearl} to 20
+	teleport the player above the target block
+
+on right click holding purple dye:
+	loop all entities in radius 5 around the player:
+		set {_bl.%entity%} to the block under the entity
+		if {_bl.%entity%} is air:
+			stop
+		else:
+			apply blindness 1 to loop-entity for 5 seconds 
+			apply slowness 200 to loop-entity for 5 seconds
+			while loop-entity isn't above {_bl.%entity%}:
+				teleport loop-entity above {_bl.%entity%}
+				wait 3 seconds
+				stop
 	
 	
 	
