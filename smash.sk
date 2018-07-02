@@ -1,18 +1,4 @@
 #For our own Super Smash Bros 
-#/replaceitem entity @p slot.armor.head minecraft:skull {SkullOwner:"MHF_Blaze"}
-#set {cooldown::fireball::%player%} to 5
-#every second subtract 1 from {cooldown::fireball::%player%}
-#if {cooldown.%player%::fireball} is greater than 0:
-#		send "&cCooldown: %{cooldown.%player%::fireball}%"
-#		stop
-#set {cooldown.%player%::fireball} to 5
-#{smashchar::%player%} is "spider"
-
-
-
-
-
-
 
 options:
 	#Broadcast Title
@@ -26,8 +12,6 @@ every 1 second:
 		loop {cooldown.%loop-player%::*}:
 			{cooldown.%loop-player%::%loop-index%} is not 0
 			remove 1 from {cooldown.%loop-player%::%loop-index%}
-
-
 
 #BLAZE
 on right click on a Blaze:
@@ -210,7 +194,6 @@ on right click holding string:
 	shoot a snowball at speed 2
 	wait 3 tick
 	shoot a snowball at speed 2
-	set {cooldown::stickyweb::%player%} to 30
 
 on projectile hit:
 	{smashchar::%shooter%} is "spider"
@@ -220,7 +203,9 @@ on projectile hit:
 		set the block at {_b} to cobweb
 		wait 5 seconds
 		set the block at {_b} to air
-
+	if block at {_b} is lava:
+		set the block at {_b} to lava
+	
 on right click holding fermented spider eye:
 	name of player's weapon is "&bSpider Pounce"
 	if {cooldown.%player%::spiderpounce} is greater than 0:
@@ -246,7 +231,7 @@ on right click on Enderman:
 	color player's chestplate black
 	color player's boots black
 	give player ender pearl named "&5Pearl"
-	give player purple dye named "&8Hinder"
+	give player purple dye named "&bFreeze"
 	give player eye of ender named "&5Proj Immunity"
 	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Enderman""}"
 	message "{@U} You have chosen &5Enderman &8as your character" to the player
@@ -258,6 +243,7 @@ on shoot:
 	cancel event
 
 on right click holding an ender pearl:
+	name of player's weapon is "&5Pearl"
 	{smashchar::%player%} is "enderman"
 	if {cooldown.%player%::enderpearl} is greater than 0:
 		send "&cCooldown: %{cooldown.%player%::enderpearl}%"
@@ -265,18 +251,125 @@ on right click holding an ender pearl:
 	set {cooldown.%player%::enderpearl} to 20
 	teleport the player above the target block
 
-on right click holding purple dye:
-	loop all entities in radius 5 around the player:
-		set {_bl.%entity%} to the block under the entity
-		if {_bl.%entity%} is air:
-			stop
-		else:
-			apply blindness 1 to loop-entity for 5 seconds 
-			apply slowness 200 to loop-entity for 5 seconds
-			while loop-entity isn't above {_bl.%entity%}:
-				teleport loop-entity above {_bl.%entity%}
-				wait 3 seconds
-				stop
+on right click holding purple dye on player:
+	name of player's weapon is "&bFreeze"
+	{smashchar::%player%} is "enderman"
+	if {cooldown.%player%::hinder} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::hinder}%"
+		stop
+	set {cooldown.%player%::hinder} to 30
+	set {_bl} to the location at clicked player
+	apply blindness 1 to clicked player for 3 seconds
+	apply slowness 200 to clicked player for 3 seconds
+	loop 6 times:
+		teleport the clicked player at {_bl}
+		wait 0.5 seconds 
+		
+on right click holding eye of ender:
+	name of player's weapon is "&5Proj Immunity"
+	{smashchar::%player%} is "enderman"
+	if {cooldown.%player%::projimmunity} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::projimmunity}%"
+		stop
+	set {cooldown.%player%::projimmunity} to 35
+	set {p.%player%} to true
+	send "&5Projectile Immunity Activated" to the player
+	wait 15 seconds	
+	send "&5Projectile Immunity Deactivated" to the player
+	delete {p.%player%}
+
+on damage of a player:
+	{smashchar::%victim%} is "enderman"
+	damage cause is projectile
+	if {p.%victim%} is true:
+		cancel event
+
+#CHICKEN
+
+on right click on Chicken:
+	set {smashchar::%player%} to "chicken"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
+	equip player with all leather armor
+	color player's leggings white
+	color player's chestplate white
+	color player's boots yellow
+	give player raw chicken named "&fEgg Shooter"
+	give player feather named "&bFly"
+	give player cooked chicken named "&4Egg Bomb"
+	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Chicken""}"
+	message "{@U} You have chosen &fChicken &8as your character" to the player
+
+on right click holding raw chicken:
+	name of player's weapon is "&fEgg Shooter"
+	{smashchar::%player%} is "chicken"
+	if {cooldown.%player%::eggshooter} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::eggshooter}%"
+		stop
+	set {cooldown.%player%::eggshooter} to 3
+	loop 3 times:
+		shoot an egg at speed 5
+		wait 3 tick
+
+on right click holding feather:
+	name of player's weapon is "&bFly"
+	{smashchar::%player%} is "chicken"
+	if {cooldown.%player%::fly} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::fly}%"
+		stop
+	set {cooldown.%player%::fly} to 20
+	loop 3 times:
+		push the player up at speed 0.75
+		push the player forwards at speed 0.75
+		wait 0.5 seconds
+
+on right click holding cooked chicken:
+	name of player's weapon is "&4Egg Bomb"
+	{smashchar::%player%} is "chicken"
+	the block below the player is air
+	if {cooldown.%shooter%::eggbomb} is greater than 0:
+		send "&cCooldown: %{cooldown.%shooter%::eggbomb}%"
+		stop
+	set {cooldown.%shooter%::eggbomb} to 30
+	shoot an egg at speed 0.1 down
+	set {e.%player%} to true
 	
 	
+
+on projectile hit:
+	{smashchar::%shooter%} is "chicken"
+	projectile is egg
+	if {e.%shooter%} is true:
+		create a safe explosion of force 5 at the projectile
+		delete {e.%shooter%}
+		set {cooldown.%shooter%::eggshooter} to 5
+	
+		
+		
+	
+	
+
+
+
+
+#/replaceitem entity @p slot.armor.head minecraft:skull {SkullOwner:"MHF_Blaze"}
+#if {cooldown.%player%::fireball} is greater than 0:
+#		send "&cCooldown: %{cooldown.%player%::fireball}%"
+#		stop
+#set {cooldown.%player%::fireball} to 5
+#{smashchar::%player%} is "spider"
+#name of player's weapon "&5Pearl"
+
+
+
+
+
+
+
+
+
+	
+	
+	
+
 	
