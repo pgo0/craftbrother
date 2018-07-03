@@ -343,14 +343,180 @@ on projectile hit:
 		create a safe explosion of force 5 at the projectile
 		delete {e.%shooter%}
 		set {cooldown.%shooter%::eggshooter} to 5
+
+#COW
+on right click on Cow:
+	set {smashchar::%player%} to "cow"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
+	equip player with all leather armor
+	color player's leggings white
+	color player's chestplate black
+	color player's boots black
+	give player leather named "&6Leather?"
+	give player raw beef named "&4Bull Rush"
+	give player milk bucket named "&cRefreshment"
+	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Cow""}"
+	message "{@U} You have chosen &0Cow &8as your character" to the player
+
+on right click holding raw beef:
+	{smashchar::%player%} is "cow"
+	name of player's weapon is "&4Bull Rush"
+	if {cooldown.%player%::bullrush} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::bullrush}%"
+		stop
+	set {cooldown.%player%::bullrush} to 20
+	loop 10 times:
+		if the block below the player is air:
+			push the player forwards at speed 0.5
+		else:
+			push the player forwards at speed 1
+		loop all entities in radius 2 of the player:
+			make the player damage loop-entity by 2
+		wait 0.125 seconds
 	
-		
-		
+on right click holding milk bucket:
+	{smashchar::%player%} is "cow"
+	name of player's weapon is "&cRefreshment"
+	remove milk bucket from the player
+	wait 1 tick
+	give player a milk bucket named "&cRefreshment"
+	if {cooldown.%player%::refreshment} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::refreshment}%"
+		stop
+	set {cooldown.%player%::refreshment} to 30
+	heal the player by 2.5
 	
+#WITCH	
+
+on right click on Witch:
+	set {smashchar::%player%} to "witch"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
+	equip player with all leather armor
+	color player's leggings lime
+	color player's chestplate purple
+	color player's boots purple
+	give player water bottle named "&9Splash"
+	give player nether star named "&5Power Switch"
+	give player stick named "&5Wand: &4Fire"
+	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Witch""}"
+	apply slowness to the player for 999 days
+	apply hunger to the player for 999 days
+	message "{@U} You have chosen &5Witch &8as your character" to the player	
+
+on right click holding nether star:
+	if the player's inventory has a stick named "&5Wand: &4Fire":
+		remove stick from the player
+		give player stick named "&5Wand: &bIce"
+	else if the player's inventory has a stick named "&5Wand: &bIce":
+		remove stick from the player
+		give player stick named "&5Wand: &7Wind"
+	else if the player's inventory has a stick named "&5Wand: &7Wind":
+		remove stick from the player
+		give player stick named "&5Wand: &eStorm"
+	else if the player's inventory has a stick named "&5Wand: &eStorm":
+		remove stick from the player
+		give player stick named "&5Wand: &4Fire"
+
+on right click holding water bottle:
+	{smashchar::%player%} is "witch"
+	name of player's weapon is "&9Splash"
+	remove water bottle from player
+	give player water bottle named "&9Splash"
+	if {cooldown.%player%::splash} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::splash}%"
+		stop
+	set {cooldown.%player%::splash} to 1
+	shoot bottle of enchanting from player
+	wait 1 tick
+	
+on xp spawn:
+	cancel event
+
+on right click holding stick:
+	{smashchar::%player%} is "witch"
+	if {cooldown.%player%::wand} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::wand}%"
+		stop
+	set {cooldown.%player%::wand} to 10
+	if the player is holding a stick named "&5Wand: &4Fire":
+		loop 5 times:
+			shoot a fireball at speed 2
+			wait 3 ticks
+	else if the player is holding a stick named "&5Wand: &bIce":
+		shoot a snowball at speed 5
+	else if the player is holding a stick named "&5Wand: &7Wind":
+		push the target entity in direction of player at speed 1.5
+	else if the player is holding a stick named "&5Wand: &eStorm":
+		loop 5 times:
+			strike lightning at the target
+
+on projectile hit:
+	{smashchar::%shooter%} is "witch"
+	projectile is snowball
+	loop all entities in radius 5 of the projectile:
+		apply blindness to loop-entity for 10 seconds
+
+#ZOMBIE
+
+on right click on Zombie:
+	set {smashchar::%player%} to "zombie"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
+	equip player with all leather armor
+	color player's leggings blue
+	color player's chestplate green
+	color player's boots gray
+	give player iron shovel named "&2Shovel"
+	give player cactus green named "&2Infect"
+	give player zombie head named "&4Zombie Power"
+	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Zombie""}"
+	message "{@U} You have chosen &2Zombie &8as your character" to the player
+
+on right click holding iron shovel:
+	{smashchar::%player%} is "zombie"
+	name of player's weapon is "&2Shovel"
+	if {cooldown.%player%::ironshovel} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::ironshovel}%"
+		stop
+	set {cooldown.%player%::ironshovel} to 5
+	push the player up at speed 1
+	push the player forwards at speed 1.5
+
+on right click holding cactus green:
+	{smashchar::%player%} is "zombie"
+	name of player's weapon is "&2Infect"
+	
+	apply poison to the clicked entity for 2 seconds
+
+on right click holding zombie head:
+	{smashchar::%player%} is "zombie"
+	name of player's weapon is "&4Zombie Power"
+
+	apply strength to the player for 10 seconds
 	
 
 
 
+
+
+
+on right click on Slime:
+	set {smashchar::%player%} to "witch"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
+	equip player with all leather armor
+	color player's leggings lime
+	color player's chestplate purple
+	color player's boots purple
+	give player water bottle named "&9Splash"
+	give player nether star named "&5Power Switch"
+	give player stick named "&5Wand: &4Fire"
+	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Witch""}"
+	apply slowness to the player for 999 days
+	apply hunger to the player for 999 days
+	message "{@U} You have chosen &5Witch &8as your character" to the player
 
 #/replaceitem entity @p slot.armor.head minecraft:skull {SkullOwner:"MHF_Blaze"}
 #if {cooldown.%player%::fireball} is greater than 0:
