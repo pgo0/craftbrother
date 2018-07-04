@@ -1,0 +1,17 @@
+#SMASH MECHANICS
+
+on projectile hit:
+	projectile is arrow
+	delete projectile
+
+on damage of player:
+	damage cause is not fall
+	set {_d} to the damage * 2
+	add {_d} to {health::%victim%}
+	console command "/scoreboard players set %victim% SmashHP %{health::%victim%}%"
+	if attacker is player:
+		push victim direction from attacker to victim at speed ({health::%victim%} / 20)
+
+on death of player:
+	console command "/scoreboard players reset %victim% SmashHP"
+	delete {health::%victim%}
