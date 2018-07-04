@@ -1,3 +1,7 @@
+#--------------------------------------------------------------------
+#                   UNIVERSAL COMMAND FOR SMASH BROS
+#--------------------------------------------------------------------
+
 options:
 	#Broadcast Title
 	P: &7[&4SMASH&7]
@@ -5,11 +9,20 @@ options:
 	#Message Title (private messages to players)
 	U: &7[&cSmashClass&7]
 
-#--------------------------------------------------------------------
-#                   UNIVERSAL COMMAND FOR SMASH BROS
-#--------------------------------------------------------------------
-
 command /smash <text> [<text>]:
 	usage: /smash <text>
 	trigger:
-		
+		if arg 1 is "start":
+			if {smashgame} is set:
+				send "&cGame is already running!"
+				stop
+			set {smashgame} to true
+			delete {health::*}
+			stop
+		if arg 1 is "stop" or "end":
+			if {smashgame} is not set:
+				send "&cGame is not running!"
+				stop
+			delete {smashgame}
+			delete {health::*}
+			stop
