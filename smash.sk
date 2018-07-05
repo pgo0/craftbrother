@@ -138,20 +138,39 @@ on right click holding a bone:
 on right click holding an arrow:
 	{smashchar::%player%} is "skeleton"
 	name of player's weapon is "&cArrow Missiles"
+	if {cooldown.%player%::missile} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::missile}%"
+		stop
+	set {cooldown.%player%::missile} to 30
+	set {missile.%player%} to true
+	remove all arrow from player
 	shoot an arrow at speed 0.5 up
 	wait 0.25 seconds
 	shoot an arrow at speed 0.5 up 
 	wait 0.25 seconds
 	shoot an arrow at speed 0.5 up
-	loop all players in radius 50 around the player:
-		set {_rp} to loop-player
+	wait 5 seconds
+	give 1 arrow named "&cArrow Missiles" to player
+	delete {missile.%player%}
 
 on shoot:
 	{smashchar::%shooter%} is "skeleton"
 	projectile is arrow
-	wait 1 second
+	{missile.%shooter%} is set
+	loop all players:
+		loop-player is not the shooter
+		set {_lpdist} to distance between shooter and loop-player
+		if {_rp} is not set:
+			set {_rp} to loop-player
+			set {_rpdist} to {_lpdist}
+		else:
+			{_lpdist} is less than {_rpdist}
+			set {_rp} to loop-player
+			set {_rpdist} to {_lpdist}
+	{_rp} is set
 	while projectile exists:
-		push the projectile direction from the projectile to {_rp} at speed 0.5
+		{missile.%shooter%} is set
+		push the projectile direction from the projectile to {_rp} at speed 0.4
 		wait 2 ticks
 
 #ZOMBIEPIGMAN
