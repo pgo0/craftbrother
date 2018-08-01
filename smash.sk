@@ -1,5 +1,8 @@
 #For our own Super Smash Bros 
 
+aliases:
+	slime block = 165
+
 options:
 	#Broadcast Title
 	P: &7[&4SMASH&7]
@@ -16,6 +19,33 @@ every 1 second:
 on player eat:
 	cancel event
 
+on ignition:
+	cancel event
+
+on damage of a player:
+	if {smashchar::%victim%} is "blaze":
+		damage cause is contact
+		chance of 10%:
+			ignite the attacker for 3 seconds
+	if {smashchar::%victim%} is "zombiepigman":
+		damage cause is a projectile
+		victim is blocking
+		chance of 25%:
+			cancel event
+	if {smashchar::%attacker%} is "spider":
+		name of the attacker's weapon is "&aSpider Bite"
+		chance of 25%:
+			apply poison to the victim for 3 seconds
+	if {smashchar::%victim%} is "enderman":
+		damage cause is void
+		chance of 1%:
+			cancel event
+			teleport the victim to spawn
+	if {smashchar::%victim%} is "cow":
+		chance of 10%:
+			apply speed 2 to the victim for 10 seconds
+		
+
 #FREQUENT CHARACTER POWERUPS
 
 on right click holding feather:
@@ -31,7 +61,7 @@ on right click holding feather:
 		wait 0.5 seconds
 
 on right click holding a blaze rod:
-	{smashchar::%player%} is "blaze"
+	{smashchar::%player%} is "blaze" or "ghast"
 	name of player's weapon is "&6Blaze Rod"
 	if {cooldown.%player%::fireball} is greater than 0:
 		send "&cCooldown: %{cooldown.%player%::fireball}%"
@@ -69,8 +99,6 @@ on right click holding blaze powder:
 	loop all entities in radius 3 of the player:
 		ignite loop-entity for 3 seconds
 	
-
-
 #CREEPER
 
 on right click on a Creeper:
@@ -87,7 +115,17 @@ on right click on a Creeper:
 	give player a tnt named "&4ALLAHUAKBAR!!1!11!!"
 	message "{@U} You have chosen &aCreeper &8as your character" to the player
 
+on right click holding gunpowder:
+	{smashchar::%player%} is "creeper"
+	name of player's weapon is "&7Gunpowder"
+	if {cooldown.%player%::gunpowder} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::gunpowder}%"
+		stop
+	set {cooldown.%player%::gunpowder} to 10	
+	apply blindness to the target player for 1 seconds
+		
 on right click holding coal:
+	{smashchar::%player%} is "creeper"
 	name of player's weapon is "&aBoomboost"
 	if {cooldown.%player%::boomboost} is greater than 0:
 		send "&cCooldown: %{cooldown.%player%::boomboost}%"
@@ -97,15 +135,22 @@ on right click holding coal:
 	create fake explosion under the player
 
 on right click holding a tnt:
+	{smashchar::%player%} is "creeper"
 	name of player's weapon is "&4ALLAHUAKBAR!!1!11!!"
 	if {cooldown.%player%::allah} is greater than 0:
 		send "&cCooldown: %{cooldown.%player%::allah}%"
 		stop
-	set {cooldown.%player%::allah} to 40
-	create a safe explosion of force 15 at player
-
-
-
+	set {cooldown.%player%::allah} to 45
+	loop all blocks in radius 3 of the player:
+		if loop-block is air:
+			create a fake explosion at loop-block
+	loop all entities in radius 6 of the player:
+		make the player damage loop-entity by 2.5
+		push loop-entity direction from the player to loop-entity at speed 4
+		chance of 5%:
+			make the player damage loop-entity by 100
+	damage the player by 1.5
+	
 #SKELETON
 
 on right click on a Skeleton:
@@ -119,8 +164,19 @@ on right click on a Skeleton:
 	equip the player with skeleton head
 	give player a bow of infinity named "&7Bow"
 	give player a bone named "&7Bone Rush"
-	give player an arrow named "&cArrow Missiles"
+	give player an arrow named "&cArrow Dive"
 	message "{@U} You have chosen &fSkeleton &8as your character" to the player
+
+on left click holding bow:
+	{smashchar::%player%} is "skeleton"
+	name of player's weapon is "&7Bow"
+	if {cooldown.%player%::bow} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::bow}%"
+		stop
+	set {cooldown.%player%::bow} to 15
+	push the player up at speed 1.5 
+	loop all entities in radius 4 of the player:
+		push loop-entity direction from the player to loop-entity at speed 2
 
 on right click holding a bone:
 	{smashchar::%player%} is "skeleton"
@@ -137,41 +193,29 @@ on right click holding a bone:
 
 on right click holding an arrow:
 	{smashchar::%player%} is "skeleton"
-	name of player's weapon is "&cArrow Missiles"
-	if {cooldown.%player%::missile} is greater than 0:
-		send "&cCooldown: %{cooldown.%player%::missile}%"
+	name of player's weapon is "&cArrow Dive"
+	if {cooldown.%player%::arrowdive} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::arrowdive}%"
 		stop
-	set {cooldown.%player%::missile} to 30
-	set {missile.%player%} to true
-	remove all arrow from player
-	shoot an arrow at speed 0.5 up
-	wait 0.25 seconds
-	shoot an arrow at speed 0.5 up 
-	wait 0.25 seconds
-	shoot an arrow at speed 0.5 up
-	wait 5 seconds
-	give 1 arrow named "&cArrow Missiles" to player
-	delete {missile.%player%}
-
-on shoot:
+	set {cooldown.%player%::arrowdive} to 25
+	shoot an arrow from the player at speed 2.5
+	set the player's gamemode to creative
+	make the player ride the last shot entity
+	
+on projectile hit:
 	{smashchar::%shooter%} is "skeleton"
 	projectile is arrow
-	{missile.%shooter%} is set
-	loop all players:
-		loop-player is not the shooter
-		set {_lpdist} to distance between shooter and loop-player
-		if {_rp} is not set:
-			set {_rp} to loop-player
-			set {_rpdist} to {_lpdist}
-		else:
-			{_lpdist} is less than {_rpdist}
-			set {_rp} to loop-player
-			set {_rpdist} to {_lpdist}
-	{_rp} is set
-	while projectile exists:
-		{missile.%shooter%} is set
-		push the projectile direction from the projectile to {_rp} at speed 0.4
-		wait 2 ticks
+	if the shooter is riding the projectile:
+		create a safe explosion of force 2.5 at the projectile
+		set the shooter's gamemode to adventure
+		wait 10 ticks
+		while the block at the shooter isn't air:
+			teleport the shooter to the block above the shooter
+		wait 5 seconds
+		stop
+	else:
+		chance of 5%:
+			create a safe explosion of force 1 at the projectile
 
 #ZOMBIEPIGMAN
 
@@ -185,25 +229,56 @@ on right click on a Zombie Pigman:
 	color player's boots pink
 	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""ZombiePigman""}"
 	give player a golden sword named "&4Sword"
-	give player a flint named "&6Fire"
+	give player a porkchop named "&6Headbutt"
 	give player a redstone named "&bPower Boost"
 	apply fire resistance to player for 999 days
 	message "{@U} You have chosen &2Zombie &dPigman &8as your character" to the player
 
+on right click holding raw porkchop:
+	{smashchar::%player%} is "zombiepigman"
+	name of player's weapon is "&6Headbutt"
+	if {cooldown.%player%::pork} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::pork}%"
+		stop
+	set {cooldown.%player%::pork} to 15
+	push the player forwards at speed 1.5
+	loop 5 times:
+		loop all entities in radius 2 of the player:
+			make the player damage loop-entity by 0.5
+			push loop-entity in direction of the player at speed 4
+		wait 0.1 seconds
+
+on right click holding cooked porkchop:
+	{smashchar::%player%} is "zombiepigman"
+	name of player's weapon is "&4Powered Headbutt"
+	if {cooldown.%player%::poweredpork} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::poweredpork}%"
+		stop
+	set {cooldown.%player%::poweredpork} to 5
+	push the player forwards at speed 2.5
+	loop 5 times:
+		loop all entities in radius 3 of the player:
+			make the player damage loop-entity by 1
+			push loop-entity in direction of the player at speed 5
+		wait 0.1 seconds
+
 on right click holding a redstone:
+	{smashchar::%player%} is "zombiepigman"
 	name of player's weapon is "&bPower Boost"
 	if {cooldown.%player%::powerboost} is greater than 0:
 		send "&cCooldown: %{cooldown.%player%::powerboost}%"
 		stop
-	set {cooldown.%player%::powerboost} to 40
+	set {cooldown.%player%::powerboost} to 60
 	remove gold sword named "&4Sword" from the player
 	give a diamond sword named "&9Powered Sword" to the player
-	apply speed 3 to the player for 10 seconds
-	wait 10 seconds
+	remove porkchop from the player
+	give cooked porkchop named "&4Powered Headbutt" to the player
+	apply speed 3 to the player for 15 seconds
+	wait 15 seconds
 	remove diamond sword named "&9Powered Sword" from the player
 	give player gold sword named "&4Sword"
-
-
+	remove cooked porkchop from the player
+	give raw porkchop named "&6Headbutt" to the player
 
 #SPIDER
 
@@ -216,18 +291,19 @@ on right click on Spider:
 	color player's chestplate black
 	color player's boots black
 	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Spider""}"
-	give player spider eye named "&2Spider Bite"
+	give player spider eye named "&aSpider Bite"
 	give player string named "&fSticky Web"
 	give player fermented spider eye named "&bSpider Pounce"
 	apply jump boost 2 to the player for 999 days
 	message "{@U} You have chosen &0Spider &8as your character" to the player
 
 on right click holding string:
+	{smashchar::%player%} is "spider"
 	name of player's weapon is "&fSticky Web"
 	if {cooldown.%player%::stickyweb} is greater than 0:
 		send "&cCooldown: %{cooldown.%player%::stickyweb}%"
 		stop
-	set {cooldown.%player%::stickyweb} to 20
+	set {cooldown.%player%::stickyweb} to 1
 	shoot a snowball at speed 2
 	wait 3 tick
 	shoot a snowball at speed 2
@@ -246,9 +322,19 @@ on projectile hit:
 		set the block at {_b} to cobweb
 		wait 5 seconds
 		set the block at {_b} to air
-	if block at {_b} is lava:
-		set the block at {_b} to lava
 	
+on projectile hit:
+	{smashchar::%shooter%} is "spider"
+	projectile is snowball
+	set {_b} to the block at the projectile
+	loop all players in radius 1 of the projectile:
+		if {smashchar::%loop-player%} is "spider":
+			stop
+		else:
+			chance of 25%:
+				apply slowness to loop-player for 5 seconds
+
+
 on right click holding fermented spider eye:
 	name of player's weapon is "&bSpider Pounce"
 	if {cooldown.%player%::spiderpounce} is greater than 0:
@@ -314,10 +400,10 @@ on right click holding eye of ender:
 	if {cooldown.%player%::projimmunity} is greater than 0:
 		send "&cCooldown: %{cooldown.%player%::projimmunity}%"
 		stop
-	set {cooldown.%player%::projimmunity} to 5
+	set {cooldown.%player%::projimmunity} to 30
 	set {p.%player%} to true
 	send "&5Projectile Immunity Activated" to the player
-	wait 5 seconds	
+	wait 10 seconds	
 	send "&5Projectile Immunity Deactivated" to the player
 	delete {p.%player%}
 
@@ -354,6 +440,10 @@ on right click holding raw chicken:
 		shoot an egg at speed 5
 		wait 3 tick
 
+on spawn of a chicken:
+	wait 1 tick
+	create a safe explosion of force 1 at the chicken
+
 on right click holding cooked chicken:
 	name of player's weapon is "&4Egg Bomb"
 	{smashchar::%player%} is "chicken"
@@ -369,7 +459,7 @@ on projectile hit:
 	{smashchar::%shooter%} is "chicken"
 	projectile is egg
 	if {e.%shooter%} is true:
-		create a safe explosion of force 5 at the projectile
+		create a safe explosion of force 2.5 at the projectile
 		delete {e.%shooter%}
 		set {cooldown.%shooter%::eggshooter} to 5
 
@@ -514,11 +604,7 @@ on right click holding iron shovel:
 	push the player forwards at speed 1.5
 	loop all entities in radius 5 around the player:
 		make the player damage loop-entity by 1
-			
-	
-	
-	
-		
+				
 on right click holding cactus green:
 	{smashchar::%player%} is "zombie"
 	name of player's weapon is "&2Infect"
@@ -552,30 +638,235 @@ on right click holding diamond shovel:
 	set {cooldown.%player%::diamondshovel} to 5
 	push the player up at speed 2
 	push the player forwards at speed 3
-	
-		
-	
-	
 
-
-
-
+#SLIME
 
 on right click on Slime:
-	set {smashchar::%player%} to "witch"
+	set {smashchar::%player%} to "slime"
 	execute console command "minecraft:clear %player%"
 	execute console command "heal %player%"
 	equip player with all leather armor
 	color player's leggings lime
-	color player's chestplate purple
-	color player's boots purple
-	give player water bottle named "&9Splash"
-	give player nether star named "&5Power Switch"
-	give player stick named "&5Wand: &4Fire"
-	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Witch""}"
-	apply slowness to the player for 999 days
-	apply hunger to the player for 999 days
-	message "{@U} You have chosen &5Witch &8as your character" to the player
+	color player's chestplate lime
+	color player's boots lime
+	give player slimeball named "&aSlime Ball"
+	give player slime block named "&aSlime Jump"
+	give player light green dye named "&aSlime Drop"
+	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""Slimes""}"
+	apply jump boost 2 to the player for 999 days
+	message "{@U} You have chosen &aSlime &8as your character" to the player
+
+on right click holding slimeball:
+	{smashchar::%player%} is "slime"
+	name of player's weapon is "&aSlime Ball"
+	if {cooldown.%player%::slimeball} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::slimeball}%"
+		stop
+	set {cooldown.%player%::slimeball} to 15
+	shoot a snowball from the player at speed 2
+
+on projectile hit:
+	{smashchar::%shooter%} is "slime"
+	projectile is snowball
+	set {_a} to the block 1 above the projectile
+	set {_b} to the location at {_a}
+	add 1 to the x-coordinate of {_b}
+	add 1 to the y-coordinate of {_b}
+	add 1 to the z-coordinate of {_b}
+	set {_c} to the location at {_a}
+	add -1 to the x-coordinate of {_c}
+	add -1 to the y-coordinate of {_c}
+	add -1 to the z-coordinate of {_c}
+	loop blocks within {_b} to {_c}:
+		if loop-block is air:
+			set loop-block to slime block
+	wait 5 seconds
+	loop blocks within {_b} to {_c}:
+		if loop-block is slime block:
+			set loop-block to air
+	delete {_a}
+	delete {_b}
+	delete {_c}
+
+on right click holding slime block:
+	{smashchar::%player%} is "slime"
+	name of player's weapon is "&aSlime Jump"
+	if {cooldown.%player%::slimejump} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::slimejump}%"
+		stop
+	set {cooldown.%player%::slimejump} to 30
+	if the block below the player is air:
+		set {_block} to the block 3 below the player
+		if {_block} is air:
+			set the block 3 below the player to slime block
+		if the block north of {_block} is air:
+			set the block north of {_block} to slime block
+		if the block south of {_block} is air:
+			set the block south of {_block} to slime block
+		if the block west of {_block} is air:
+			set the block west of {_block} to slime block
+		if the block east of {_block} is air:
+			set the block east of {_block} to slime block
+		if the block northeast of {_block} is air:
+			set the block northeast of {_block} to slime block
+		if the block northwest of {_block} is air:
+			set the block northwest of {_block} to slime block
+		if the block southeast of {_block} is air:
+			set the block southeast of {_block} to slime block
+		if the block southwest of {_block} is air:
+			set the block southwest of {_block} to slime block
+			wait 3 seconds
+		if the block north of {_block} is slime block:
+			set the block north of {_block} to air
+		if the block south of {_block} is slime block:
+			set the block south of {_block} to air
+		if the block west of {_block} is slime block:
+			set the block west of {_block} to air
+		if the block east of {_block} is slime block:
+			set the block east of {_block} to air
+		if the block northeast of {_block} is slime block:
+			set the block northeast of {_block} to air
+		if the block northwest of {_block} is slime block:
+			set the block northwest of {_block} to air
+		if the block southeast of {_block} is slime block:
+			set the block southeast of {_block} to air
+		if the block southwest of {_block} is slime block:
+			set the block southwest of {_block} to air
+		if the block at {_block} is slime block:
+			set the block at {_block} to air
+
+on walking on slime block:
+	if {smashchar::%player%} is "slime":
+		push the player up at speed 4
+
+on right click holding light green dye:
+	{smashchar::%player%} is "slime"
+	name of player's weapon is "&aSlime Drop"
+	if {cooldown.%player%::slimedrop} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::slimedrop}%"
+		stop
+	set {cooldown.%player%::slimedrop} to 60
+	set {fall.%player%} to false
+	set {drop} to the y-coordinate of the player
+	if {drop} is less than 150:
+		stop
+	else:
+		set player's hunger bar to 0.5
+		subtract 100 from {drop}
+		set {dropp} to ({drop}/10)
+	apply resistance 1000 to the player for 1 day
+		
+on damage of a player:
+	{smashchar::%victim%} is "slime"
+	damage cause is fall
+	loop all entities in radius 3 around the victim:
+		make the victim damage loop-entity by {dropp}
+		push loop-entity direction from victim to loop-entity at speed 5
+	remove resistance from the victim
+	delete {dropp}
+	set {fall.%victim%} to true
+
+#SQUID
+on right click on Squid:
+	set {smashchar::%player%} to "squid"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
+	equip player with all leather armor
+	color player's leggings blue
+	color player's chestplate blue
+	color player's boots blue
+	give player black dye named "&0Ink Blast"
+	give player lapis lazuli named "&9Squid Attack"
+	give player water bucket named "&9Water Jet"
+	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Squid""}"
+	set {waterjetn.%player%} to 100
+	message "{@U} You have chosen &9Squid &8as your character" to the player
+
+on right click holding black dye:
+	{smashchar::%player%} is "squid"
+	name of player's weapon is "&0Ink Blast"
+	if {cooldown.%player%::inkblast} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::inkblast}%"
+		stop
+	set {cooldown.%player%::inkblast} to 10
+	apply blindness 1 to the clicked player for 3 seconds
+
+on right click on player holding lapis lazuli:
+	{smashchar::%player%} is "squid"
+	name of player's weapon is "&9Squid Attack"
+	if {cooldown.%player%::inkblast} is greater than 0:
+		send "&cCooldown: %{cooldown.%player%::inkblast}%"
+		stop
+	set {cooldown.%player%::inkblast} to 30
+	target player is set
+	set {_vehicle} to targeted player
+	make the player ride {_vehicle}
+	wait 0.5 seconds
+	loop 3 times:
+		make the player damage {_vehicle} by 0.5
+		wait 1 seconds
+	make the player dismount the vehicle
+
+on right click holding a water bucket:
+	{smashchar::%player%} is "squid"
+	name of player's weapon is "&9Water Jet"
+	if {waterjetn.%player%} is greater than 0:
+		push the player backwards at speed 1.5
+		message "{@P}&9Water Jet Fuel &7is at %{waterjetn.%player%} - 10%%%" to the player
+		loop all entities in radius 7 of the player:
+			if loop-entity is target entity:
+				push loop-entity direction from player to loop-entity at speed 3
+	else:
+		message "{@P}&9Water Jet Fuel &7is at 0%%" to the player
+		stop
+	remove 10 from {waterjetn.%player%}
+
+every 5 seconds:
+	loop all players:
+		if {waterjetn.%loop-player%} is less than 100:
+			add 10 to {waterjetn.%loop-player%}
+
+#GHAST
+on right click on Ghast:
+	set {smashchar::%player%} to "ghast"
+	execute console command "minecraft:clear %player%"
+	execute console command "heal %player%"
+	equip player with all leather armor
+	color player's leggings white
+	color player's chestplate white
+	color player's boots white
+	give player a blaze rod named "&6Blaze Rod" 
+	give player a bone meal named "&fGhast Glide"
+	give player a ghast tear named "&dRegeneration"
+	execute console command "replaceitem entity %player% slot.armor.head minecraft:skull 1 3 {SkullOwner:""MHF_Ghast""}"
+	message "{@U} You have chosen &fGhast &8as your character" to the player
+
+on right click holding bone meal:
+	{smashchar::%player%} is "ghast"
+	name of player's weapon is "&fGhast Glide"
+	loop 30 times:
+		push the player forwards at speed 0.1
+		push the player up at speed 0.1
+		wait 1 tick
+
+on right click holding bone meal:
+	{smashchar::%player%} is "ghast"
+	name of player's weapon is "&fGhast Glide"
+	loop 3 times:
+		shoot a fireball at speed 2 down
+		wait 10 ticks
+
+on right click holding ghast tear:
+	heal the player by 1.5
+
+
+
+
+
+
+
+
+
 
 #/replaceitem entity @p slot.armor.head minecraft:skull {SkullOwner:"MHF_Blaze"}
 #if {cooldown.%player%::fireball} is greater than 0:
@@ -583,16 +874,8 @@ on right click on Slime:
 #		stop
 #set {cooldown.%player%::fireball} to 5
 #{smashchar::%player%} is "spider"
-#name of player's weapon "&5Pearl"
-#loop 10 times:
-#		if the block below the player isn't air:
-#			loop all entities in radius 5 around the player:
-#				make the player damage loop-entity by 1
-#				stop
-#		else:
-#			stop
-#		wait 0.5 seconds
-#
+#name of player's weapon is "&5Pearl"
+#{waterjetn}
 
 
 
